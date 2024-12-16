@@ -22,7 +22,7 @@
 #include <math.h>
 
 // TEST: Удалить при необходимости
-char *myItoa(int number, char *arr, int base);
+char *myItoa(int number, char *arr, int base, SPEC specif);
 void strrev2(char *arr, int start, int end);
 //
 
@@ -50,10 +50,10 @@ void addNewNumber(SPEC *specif, char symbol, int choose);
 int main(void)
 {
 
-    char *stroka = "%20c";
+    char *stroka = "%+-10d";
     char buffer[100];
     printf("Original stroka = |%s|\ns\n", stroka);
-    s21_sprintf(buffer, stroka, 's');
+    s21_sprintf(buffer, stroka, 12);
 
     return 0;
 }
@@ -186,8 +186,15 @@ char *transferStrokiInResultIntREVERS(SPEC specif, int chislo)
 
                 // Тестирую вот этот, т.к. более удобная реализация
                 char *numberInString = malloc(sizeof(char) * (size + 1));
-                numberInString = myItoa(chislo, numberInString, 10);
-                int k = size - 1;
+                numberInString = myItoa(chislo, numberInString, 10, specif);
+                int k;
+                if (specif.flag.plus == 0 && chislo >= 0)
+                    k = size - 1;
+                else
+                {
+                    k = size;
+                    i += 1;
+                }
                 for (int j = i; j >= 0; j--)
                     stroka[j] = numberInString[k--];
                 break;
@@ -199,7 +206,7 @@ char *transferStrokiInResultIntREVERS(SPEC specif, int chislo)
     {
         stroka = malloc((size) * sizeof(char));
         char *numberInString = malloc(sizeof(char) * (size + 1));
-        numberInString = myItoa(chislo, numberInString, 10);
+        numberInString = myItoa(chislo, numberInString, 10, specif);
         int k = 0;
         for (int j = 0; j < size + 1; j++)
             stroka[j] = numberInString[k++];
@@ -222,15 +229,28 @@ char *transferStrokiInResultInt(SPEC specif, int chislo)
                 stroka[i] = (specif.flag.zero == 0 ? ' ' : '0');
             else
             {
-
-                int copyChisla = chislo;
-                for (int j = length - 1; j >= length - size; j--)
+                char *numberInString = malloc(sizeof(char) * (size + 1));
+                numberInString = myItoa(chislo, numberInString, 10, specif);
+                int k;
+                if (specif.flag.plus == 0 && chislo >= 0)
+                    k = 0;
+                else
                 {
-                    int d = copyChisla % 10;
-                    stroka[j] = takeChar(d);
-                    copyChisla /= 10;
+                    k = 0; // k = size;
+                    i -= 1;
                 }
+                for (int j = i; j <= length; j++)
+                    stroka[j] = numberInString[k++];
                 break;
+
+                // int copyChisla = chislo;
+                // for (int j = length - 1; j >= length - size; j--)
+                // {
+                //     int d = copyChisla % 10;
+                //     stroka[j] = takeChar(d);
+                //     copyChisla /= 10;
+                // }
+                // break;
             }
         }
         stroka[length] = '\0';
@@ -536,7 +556,7 @@ void strrev2(char *arr, int start, int end)
     strrev2(arr, start, end);
 }
 
-char *myItoa(int number, char *arr, int base)
+char *myItoa(int number, char *arr, int base, SPEC specif)
 {
     int i = 0, r, negative = 0;
 
@@ -564,6 +584,11 @@ char *myItoa(int number, char *arr, int base)
     if (negative)
     {
         arr[i] = '-';
+        i++;
+    }
+    else if (negative == 0 && specif.flag.plus == 1)
+    {
+        arr[i] = '+';
         i++;
     }
 

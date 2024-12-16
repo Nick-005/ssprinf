@@ -1,20 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-// #include <string.h>
+#include <string.h>
 static double PRECISION = 0.00000000000001;
 // static const int MAX_NUMBER_STRING_SIZE = 32;
 
 // TEST: Удалить при необходимости
 char *myItoa(int number, char *arr, int base);
-char * myDtoa(char *s, double n);
+char *myDtoa(char *s, double n);
 // TEST: Удалить при необходимости
 void myStrrev(char *arr, int start, int end);
 int main(void)
 {
 
     // int i;
-    char s[32];
+    // char s[32];
+    // myDtoa(s, 123.112323);
+    // printf("|%s|\n", s);
     // double d[] = {
     //     0.0,
     //     42.0,
@@ -27,9 +29,6 @@ int main(void)
     // for (i = 0; i < 7; i++) {
     //     printf("%d: printf: %.14g, myDtoa: %s\n", i+1, d[i], myDtoa(s, d[i]));
     // }
-    myDtoa(s, 123.112323);
-    printf("|%s|\n", s);
-
 
     // int a = 1199;
     // char buffer[100];
@@ -48,7 +47,7 @@ int main(void)
     // {
     //     buffer[i] = number[j++];
     // }
-    
+
     // printf("|%s|\n",buffer);
     // int a = 01;
     // int b = a / 10;
@@ -58,76 +57,87 @@ int main(void)
     // double b = modf(d, &e);
     // e = e;
     // printf("%f %f", e, b);
-    // char *prikol = "%12c ----";
-    // char buffer[50];
+    char *prikol = "%12c ----";
+    char buffer[50];
     // // buffer = (char *)realloc(buffer, sizeof(char) * 100);
     // char number = '\"';
-    // sprintf(buffer, prikol, number);
-    // printf("|%s|", buffer);
+    sprintf(buffer, prikol, 's');
+    printf("|%s|", buffer);
     return 0;
 }
 
-char * myDtoa(char *s, double n) {
-        int digit, m, m1;
-        char *c = s;
-        int neg = (n < 0);
-        if (neg)
-            n = -n;
-        // calculate magnitude
-        m = log10(n);
-        int useExp = (m >= 14 || (neg && m >= 9) || m <= -9);
-        if (neg)
+char *myDtoa(char *s, double n)
+{
+    int digit, m, m1;
+    char *c = s;
+    int neg = (n < 0);
+    if (neg)
+        n = -n;
+    // calculate magnitude
+    m = log10(n);
+    int useExp = (m >= 14 || (neg && m >= 9) || m <= -9);
+    if (neg)
+        *(c++) = '-';
+    // set up for scientific notation
+    if (useExp)
+    {
+        if (m < 0)
+            m -= 1.0;
+        n = n / pow(10.0, m);
+        m1 = m;
+        m = 0;
+    }
+    if (m < 1.0)
+    {
+        m = 0;
+    }
+    // convert the number
+    while (n > PRECISION || m >= 0)
+    {
+        double weight = pow(10.0, m);
+        if (weight > 0 && !isinf(weight))
+        {
+            digit = floor(n / weight);
+            n -= (digit * weight);
+            *(c++) = '0' + digit;
+        }
+        if (m == 0 && n > 0)
+            *(c++) = '.';
+        m--;
+    }
+    if (useExp)
+    {
+        // convert the exponent
+        int i, j;
+        *(c++) = 'e';
+        if (m1 > 0)
+        {
+            *(c++) = '+';
+        }
+        else
+        {
             *(c++) = '-';
-        // set up for scientific notation
-        if (useExp) {
-            if (m < 0)
-               m -= 1.0;
-            n = n / pow(10.0, m);
-            m1 = m;
-            m = 0;
+            m1 = -m1;
         }
-        if (m < 1.0) {
-            m = 0;
+        m = 0;
+        while (m1 > 0)
+        {
+            *(c++) = '0' + m1 % 10;
+            m1 /= 10;
+            m++;
         }
-        // convert the number
-        while (n > PRECISION || m >= 0) {
-            double weight = pow(10.0, m);
-            if (weight > 0 && !isinf(weight)) {
-                digit = floor(n / weight);
-                n -= (digit * weight);
-                *(c++) = '0' + digit;
-            }
-            if (m == 0 && n > 0)
-                *(c++) = '.';
-            m--;
+        c -= m;
+        for (i = 0, j = m - 1; i < j; i++, j--)
+        {
+            // swap without temporary
+            c[i] ^= c[j];
+            c[j] ^= c[i];
+            c[i] ^= c[j];
         }
-        if (useExp) {
-            // convert the exponent
-            int i, j;
-            *(c++) = 'e';
-            if (m1 > 0) {
-                *(c++) = '+';
-            } else {
-                *(c++) = '-';
-                m1 = -m1;
-            }
-            m = 0;
-            while (m1 > 0) {
-                *(c++) = '0' + m1 % 10;
-                m1 /= 10;
-                m++;
-            }
-            c -= m;
-            for (i = 0, j = m-1; i<j; i++, j--) {
-                // swap without temporary
-                c[i] ^= c[j];
-                c[j] ^= c[i];
-                c[i] ^= c[j];
-            }
-            c += m;
-        }
-        *(c) = '\0';
-    
+        c += m;
+    }
+    *(c) = '\0';
+
     return s;
 }
 
