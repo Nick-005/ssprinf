@@ -50,14 +50,13 @@ void addNewNumber(SPEC *specif, char symbol, int choose);
 int main(void)
 {
 
-    char *stroka = "%3d";
+    char *stroka = "%20c";
     char buffer[100];
     printf("Original stroka = |%s|\ns\n", stroka);
-    s21_sprintf(buffer, stroka, 32);
+    s21_sprintf(buffer, stroka, 's');
 
     return 0;
 }
-
 
 int s21_sprintf(char *buffer, char *stroka, ...)
 {
@@ -144,8 +143,10 @@ char *transferStrokiInResultCharREVERS(SPEC specif, int symbol)
         stroka = (char *)malloc((length) * sizeof(char));
         for (int i = length; i >= 0; i--)
         {
-            if (i >= 1) stroka[i] = (specif.flag.zero == 0 ? ' ' : '0');
-            else stroka[i] = symbol;
+            if (i >= 1)
+                stroka[i] = (specif.flag.zero == 0 ? ' ' : '0');
+            else
+                stroka[i] = symbol;
         }
         stroka[length] = '\0';
     }
@@ -167,16 +168,28 @@ char *transferStrokiInResultIntREVERS(SPEC specif, int chislo)
     if (length > size)
     {
         stroka = (char *)malloc((length) * sizeof(char));
-        for (int i = length; i > 0; i--)
+        for (int i = length; i >= 0; i--)
         {
-            if (i > size) stroka[i ] = (specif.flag.zero == 0 ? ' ' : '0');
+            if (i >= size)
+                stroka[i] = (specif.flag.zero == 0 ? ' ' : '0');
             else
             {
+                //  Рабочий код
+                // int copyChisla = chislo;
+                // for (int j = i; j >= 0; j--)
+                // {
+                //     int d = copyChisla % 10;
+                //     stroka[j] = takeChar(d);
+                //     copyChisla /= 10;
+                // }
+                // break;
+
+                // Тестирую вот этот, т.к. более удобная реализация
                 char *numberInString = malloc(sizeof(char) * (size + 1));
                 numberInString = myItoa(chislo, numberInString, 10);
-                int k = 0;
-                for (int j = i-1; j < i + size + 1 ; j++)
-                    stroka[j] = numberInString[k++]; 
+                int k = size - 1;
+                for (int j = i; j >= 0; j--)
+                    stroka[j] = numberInString[k--];
                 break;
             }
         }
@@ -186,10 +199,10 @@ char *transferStrokiInResultIntREVERS(SPEC specif, int chislo)
     {
         stroka = malloc((size) * sizeof(char));
         char *numberInString = malloc(sizeof(char) * (size + 1));
-                numberInString = myItoa(chislo, numberInString, 10);
-                int k = 0;
-                for (int j = 0; j < size + 1; j++)
-                    stroka[j] = numberInString[k++]; 
+        numberInString = myItoa(chislo, numberInString, 10);
+        int k = 0;
+        for (int j = 0; j < size + 1; j++)
+            stroka[j] = numberInString[k++];
     }
     return stroka;
 }
@@ -202,10 +215,11 @@ char *transferStrokiInResultInt(SPEC specif, int chislo)
     int length = (int)specif.width;
     if (length > size)
     {
-       stroka = (char *)malloc((length) * sizeof(char));
+        stroka = (char *)malloc((length) * sizeof(char));
         for (int i = 0; i < length; i++)
         {
-            if (length - i > size) stroka[i] = (specif.flag.zero == 0 ? ' ' : '0');
+            if (length - i > size)
+                stroka[i] = (specif.flag.zero == 0 ? ' ' : '0');
             else
             {
 
@@ -246,8 +260,10 @@ char *transferStrokiInResultChar(SPEC specif, int symbol)
         stroka = (char *)malloc((length) * sizeof(char));
         for (int i = 0; i < length; i++)
         {
-            if (i + 1 != length) stroka[i] = (specif.flag.zero == 0 ? ' ' : '0');
-            else stroka[i] = symbol;
+            if (i + 1 != length)
+                stroka[i] = (specif.flag.zero == 0 ? ' ' : '0');
+            else
+                stroka[i] = symbol;
         }
         stroka[length] = '\0';
     }
@@ -355,6 +371,7 @@ SPEC check_specification(char *pointer, va_list *test)
     return specif;
 }
 
+// переводит строку в число типа long long
 long long converterToLongLong(char *chislo, SPEC *spec, int choose)
 {
     long long result = 0;
@@ -556,7 +573,6 @@ char *myItoa(int number, char *arr, int base)
 
     return arr;
 }
-
 
 void initialize(SPEC *specif)
 {
