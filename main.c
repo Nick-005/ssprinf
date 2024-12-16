@@ -20,6 +20,12 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include <math.h>
+
+// TEST: Удалить при необходимости
+char *myItoa(int number, char *arr, int base);
+void strrev2(char *arr, int start, int end);
+//
+
 int takeDigit(char chislo);
 char takeChar(int chislo);
 
@@ -44,33 +50,14 @@ void addNewNumber(SPEC *specif, char symbol, int choose);
 int main(void)
 {
 
-    char *stroka = "%f";
+    char *stroka = "%3d";
     char buffer[100];
     printf("Original stroka = |%s|\ns\n", stroka);
-    s21_sprintf(buffer, stroka, 1.2);
+    s21_sprintf(buffer, stroka, 32);
 
     return 0;
 }
 
-int sizeOfNumber(int copyChisla)
-{
-    int size = 1;
-    int d = 0;
-    while (d != -1)
-    {
-
-        d = copyChisla % 10;
-        copyChisla /= 10;
-
-        if (copyChisla == 0)
-        {
-            d = -1;
-        }
-        else
-            size++;
-    }
-    return size;
-}
 
 int s21_sprintf(char *buffer, char *stroka, ...)
 {
@@ -185,13 +172,11 @@ char *transferStrokiInResultIntREVERS(SPEC specif, int chislo)
             if (i > size) stroka[i - 1] = (specif.flag.zero == 0 ? ' ' : '0');
             else
             {
-                int copyChisla = chislo;
-                for (int j = i - 1; j >= 0; j--)
-                {
-                    int d = copyChisla % 10;
-                    stroka[j] = takeChar(d);
-                    copyChisla /= 10;
-                }
+                char *numberInString = malloc(sizeof(char) * (size + 1));
+                numberInString = myItoa(chislo, numberInString, 10);
+                int k = 0;
+                for (int j = i; j < i + size + 1; j++)
+                    stroka[j] = numberInString[k++]; 
                 break;
             }
         }
@@ -200,14 +185,11 @@ char *transferStrokiInResultIntREVERS(SPEC specif, int chislo)
     else
     {
         stroka = malloc((size) * sizeof(char));
-        int copyChisla = chislo;
-        for (int j = size - 1; j >= 0; j--)
-        {
-            int d = copyChisla % 10;
-            stroka[j] = takeChar(d);
-            copyChisla /= 10;
-        }
-        stroka[size] = '\0';
+        char *numberInString = malloc(sizeof(char) * (size + 1));
+                numberInString = myItoa(chislo, numberInString, 10);
+                int k = 0;
+                for (int j = 0; j < size + 1; j++)
+                    stroka[j] = numberInString[k++]; 
     }
     return stroka;
 }
@@ -521,6 +503,61 @@ void addNewNumber(SPEC *specif, char symbol, int choose)
     }
 }
 
+void strrev2(char *arr, int start, int end)
+{
+    char temp;
+
+    if (start >= end)
+        return;
+
+    temp = *(arr + start);
+    *(arr + start) = *(arr + end);
+    *(arr + end) = temp;
+
+    start++;
+    end--;
+    strrev2(arr, start, end);
+}
+
+char *myItoa(int number, char *arr, int base)
+{
+    int i = 0, r, negative = 0;
+
+    if (number == 0)
+    {
+        arr[i] = '0';
+        arr[i + 1] = '\0';
+        return arr;
+    }
+
+    if (number < 0 && base == 10)
+    {
+        number *= -1;
+        negative = 1;
+    }
+
+    while (number != 0)
+    {
+        r = number % base;
+        arr[i] = (r > 9) ? (r - 10) + 'a' : r + '0';
+        i++;
+        number /= base;
+    }
+
+    if (negative)
+    {
+        arr[i] = '-';
+        i++;
+    }
+
+    strrev2(arr, 0, i - 1);
+
+    arr[i] = '\0';
+
+    return arr;
+}
+
+
 void initialize(SPEC *specif)
 {
     specif->flag.hash = 0;
@@ -539,4 +576,23 @@ void initialize(SPEC *specif)
     specif->ac.inAccuracy = 0;
     specif->ac.posAccuracy = 1;
     specif->ac.accuracy = malloc(sizeof(char));
+}
+int sizeOfNumber(int copyChisla)
+{
+    int size = 1;
+    int d = 0;
+    while (d != -1)
+    {
+
+        d = copyChisla % 10;
+        copyChisla /= 10;
+
+        if (copyChisla == 0)
+        {
+            d = -1;
+        }
+        else
+            size++;
+    }
+    return size;
 }
