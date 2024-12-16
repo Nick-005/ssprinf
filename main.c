@@ -295,6 +295,7 @@ char *transferStrokiInResultChar(SPEC specif, int symbol)
     }
     return stroka;
 }
+
 // функция для проверки следующих символов после '%'
 // %[флаги][ширина][.точность][длина]спецификатор
 SPEC check_specification(char *pointer, va_list *test)
@@ -409,6 +410,7 @@ long long converterToLongLong(char *chislo, SPEC *spec, int choose)
     return result;
 }
 
+// переводит цифру из char в int
 int takeDigit(char chislo)
 {
     int num = -1;
@@ -448,6 +450,7 @@ int takeDigit(char chislo)
     return num;
 }
 
+// переводит цифру из int в char
 char takeChar(int chislo)
 {
     char num = '-';
@@ -487,6 +490,7 @@ char takeChar(int chislo)
     return num;
 }
 
+// возвращает номер спецификатора (порядок нумерации я сам придумал)
 int parseSpecificator(SPEC spec)
 {
     /*
@@ -516,6 +520,7 @@ int parseSpecificator(SPEC spec)
     return otvet;
 }
 
+// добавляет в динамический массив ПОЦИФЕРНО ширину или точность
 void addNewNumber(SPEC *specif, char symbol, int choose)
 {
     if (choose == 1)
@@ -540,6 +545,7 @@ void addNewNumber(SPEC *specif, char symbol, int choose)
     }
 }
 
+// ну штука для работы ITOA
 void strrev2(char *arr, int start, int end)
 {
     char temp;
@@ -556,6 +562,7 @@ void strrev2(char *arr, int start, int end)
     strrev2(arr, start, end);
 }
 
+// функция для перевода числа в строку
 char *myItoa(int number, char *arr, int base, SPEC specif)
 {
     int i = 0, r, negative = 0;
@@ -598,7 +605,7 @@ char *myItoa(int number, char *arr, int base, SPEC specif)
 
     return arr;
 }
-
+// функция, которая задаёт значения по умолчанию
 void initialize(SPEC *specif)
 {
     specif->flag.hash = 0;
@@ -618,6 +625,8 @@ void initialize(SPEC *specif)
     specif->ac.posAccuracy = 1;
     specif->ac.accuracy = malloc(sizeof(char));
 }
+
+// функция, которая вычисляет количество цифр в числе(размер числа)
 int sizeOfNumber(int copyChisla)
 {
     int size = 1;
