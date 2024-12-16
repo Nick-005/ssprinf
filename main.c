@@ -61,15 +61,15 @@ int main(void)
 int s21_sprintf(char *buffer, char *stroka, ...)
 {
 
-    va_list factor;
-    buffer = buffer;
-    va_start(factor, stroka);
-    for (char *c = stroka; *c; c++)
+    va_list factor;                 // переменная, которая будет нужна для получения неопределенных параметров
+    buffer = buffer;                // переменная, которая будет нужна для вывода результата, но пока она не используется
+    va_start(factor, stroka);       // отвечает за то, что начали работать с неопределенными параметрами
+    for (char *c = stroka; *c; c++) // цикл, который будет проходить по каждому символу в строке
     {
         if (*c == '%')
         {
             // printf("new\n");
-            SPEC specif = check_specification(c, &factor);
+            SPEC specif = check_specification(c, &factor); // полностью парсит все флаги, ширину, точность и сам символ
             /*
                c = 0
                d = 1
@@ -77,23 +77,21 @@ int s21_sprintf(char *buffer, char *stroka, ...)
                s = 3
            */
 
-            int a = parseSpecificator(specif);
+            int a = parseSpecificator(specif); // в переменной "а" будет лежать тип данных, который нужно вывести
             switch (a)
             {
-            case 0: // char
-                int ch = va_arg(factor, int);
+            case 0:                           // char
+                int ch = va_arg(factor, int); // получаем неопределенный параметр
                 char *result = (specif.flag.minus == 0 ? transferStrokiInResultChar(specif, ch) : transferStrokiInResultCharREVERS(specif, ch));
                 printf("result string is = |%s|\nWhere char is = |%c|\nAnd width was = |%lld|\n", result, ch, specif.width);
                 break;
-            case 1: // int
-                int chislo = va_arg(factor, int);
-
+            case 1:                               // int
+                int chislo = va_arg(factor, int); // получаем неопределенный параметр
                 char *resultInt = (specif.flag.minus == 0 ? transferStrokiInResultInt(specif, chislo) : transferStrokiInResultIntREVERS(specif, chislo));
                 printf("result string is = |%s|\nWhere number is = |%d|\nAnd width was = |%lld|\n", resultInt, chislo, specif.width);
-
                 break;
-            case 2: // float
-                double chisloo = va_arg(factor, double);
+            case 2:                                      // float
+                double chisloo = va_arg(factor, double); // получаем неопределенный параметр
                 // printf("%f", chisloo);
                 transferStrokiInResultFloat(chisloo);
                 break;
@@ -108,6 +106,7 @@ int s21_sprintf(char *buffer, char *stroka, ...)
     return 0;
 }
 
+// моя функция по преобразование числа в строку и возвращает строку
 char *converterIntToString(int chislo)
 {
     char *stroka = malloc(sizeof(char));
@@ -125,6 +124,7 @@ char *converterIntToString(int chislo)
     return stroka;
 }
 
+// тут будет реализация перевода числа с плавующей точкей в строку
 char *transferStrokiInResultFloat(double chislo)
 {
     double cheloe;
