@@ -169,13 +169,13 @@ char *transferStrokiInResultIntREVERS(SPEC specif, int chislo)
         stroka = (char *)malloc((length) * sizeof(char));
         for (int i = length; i > 0; i--)
         {
-            if (i > size) stroka[i - 1] = (specif.flag.zero == 0 ? ' ' : '0');
+            if (i > size) stroka[i ] = (specif.flag.zero == 0 ? ' ' : '0');
             else
             {
                 char *numberInString = malloc(sizeof(char) * (size + 1));
                 numberInString = myItoa(chislo, numberInString, 10);
                 int k = 0;
-                for (int j = i; j < i + size + 1; j++)
+                for (int j = i-1; j < i + size + 1 ; j++)
                     stroka[j] = numberInString[k++]; 
                 break;
             }
