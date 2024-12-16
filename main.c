@@ -43,39 +43,11 @@ char *transferStrokiInResultInt(SPEC specif, int chislo);
 void addNewNumber(SPEC *specif, char symbol, int choose);
 int main(void)
 {
-    // 4 строки, которые запускают код.
-    // char *stroka = "%0-13d %-012c";
+
     char *stroka = "%f";
     char buffer[100];
     printf("Original stroka = |%s|\ns\n", stroka);
     s21_sprintf(buffer, stroka, 1.2);
-
-    // char *stroka = "%#- 0+10.1212d %2.3d %12c";
-
-    // int a = 13412;
-    // int size = sizeOfNumber(a);
-    // printf("size = %d\n", size);
-
-    // char *s = converterIntToString(13);
-    // s = s;
-    // printf("|%s|\n", s);
-
-    // SPEC specificat;
-    // initialize(&specificat);
-    // specificat.wi.inWidth = 6;
-
-    // char *test = "512315";
-    // int result = converterToLongLong(test, specificat,1);
-    // printf("%d\n", result);
-    // printf("\n");
-
-    // for (int i = 0; i < specificat.wi_ac.inWidth; i++)
-    // {
-    //     printf("|%c|", specificat.wi_ac.width[i]);
-    // }
-
-    // printf("|%s|\n", specificat.wi_ac.width);
-    // free()
 
     return 0;
 }
@@ -105,8 +77,6 @@ int s21_sprintf(char *buffer, char *stroka, ...)
 
     va_list factor;
     buffer = buffer;
-    // long long width = -1;
-    // long long acc = -1;
     va_start(factor, stroka);
     for (char *c = stroka; *c; c++)
     {
@@ -128,16 +98,11 @@ int s21_sprintf(char *buffer, char *stroka, ...)
                 int ch = va_arg(factor, int);
                 char *result = (specif.flag.minus == 0 ? transferStrokiInResultChar(specif, ch) : transferStrokiInResultCharREVERS(specif, ch));
                 printf("result string is = |%s|\nWhere char is = |%c|\nAnd width was = |%lld|\n", result, ch, specif.width);
-                // result = realloc(result, sizeof(char));
-                // printf("\n#############################################\n");
-                // printf("result string is = |%s|\nWhere char is = |%c|\nAnd width was = |%lld|\n", result, ch, specif.width);
-
                 break;
             case 1: // int
                 int chislo = va_arg(factor, int);
 
                 char *resultInt = (specif.flag.minus == 0 ? transferStrokiInResultInt(specif, chislo) : transferStrokiInResultIntREVERS(specif, chislo));
-                // resultInt = resultInt;
                 printf("result string is = |%s|\nWhere number is = |%d|\nAnd width was = |%lld|\n", resultInt, chislo, specif.width);
 
                 break;
@@ -152,26 +117,8 @@ int s21_sprintf(char *buffer, char *stroka, ...)
             default:
                 break;
             }
-            // printf("\n#############################################\n");
-            // // Здесь у нас уже есть ширина, точность и символ.
-            // printf("Flags which we have:\n");
-            // printf("-------------------------\n");
-            // printf("zero flag   = |%d|\n", specif.flag.zero);
-            // printf("plus flag   = |%d|\n", specif.flag.plus);
-            // printf("minus flag  = |%d|\n", specif.flag.minus);
-            // printf("space flag  = |%d|\n", specif.flag.space);
-            // printf("hash flag   = |%d|\n", specif.flag.hash);
-            // printf("-------------------------\n");
-            // printf("Symbol, width and accuracy which we have:\n");
-            // printf("-------------------------\n");
-            // // printf("Exit = |%s|\n", stroka);
-            // printf("symbol  = |%c|\n", specif.symbol);
-            // printf("width   = |%lld|\naccuracy  = |%lld|\n", specif.width, specif.accuracy);
         }
-
-        // printf("%c", *c);
     }
-
     return 0;
 }
 
@@ -181,20 +128,12 @@ char *converterIntToString(int chislo)
 
     int size = sizeOfNumber(chislo);
     int copyChisla = chislo;
-
-    // stroka[size] = '\0';
-    // copyChisla = chislo;
-    // printf("size = %d\n", size);
-    // stroka = malloc(sizeof(char) * (size + 1));
     stroka = realloc(stroka, sizeof(char) * size);
     for (int i = size - 2; i >= 0; i--)
     {
         int d = copyChisla % 10;
-        // printf("%d = |%d|\n", i, d);
-
         stroka[i] = takeChar(d);
         copyChisla /= 10;
-        // printf("|%s|\n", stroka);
     }
     stroka[size - 1] = '\0';
     return stroka;
@@ -218,14 +157,8 @@ char *transferStrokiInResultCharREVERS(SPEC specif, int symbol)
         stroka = (char *)malloc((length) * sizeof(char));
         for (int i = length; i >= 0; i--)
         {
-            if (i >= 1)
-            {
-                stroka[i] = (specif.flag.zero == 0 ? ' ' : '0');
-            }
-            else
-            {
-                stroka[i] = symbol;
-            }
+            if (i >= 1) stroka[i] = (specif.flag.zero == 0 ? ' ' : '0');
+            else stroka[i] = symbol;
         }
         stroka[length] = '\0';
     }
@@ -242,30 +175,19 @@ char *transferStrokiInResultCharREVERS(SPEC specif, int symbol)
 char *transferStrokiInResultIntREVERS(SPEC specif, int chislo)
 {
     char *stroka;
-    // chislo = chislo;
     int size = sizeOfNumber(chislo);
     int length = (int)specif.width;
-    // printf("chislo = %d\n", chislo);
-    // printf("%d > %d", length, specif.wi.inWidth);
     if (length > size)
     {
-        // int j = 0;
         stroka = (char *)malloc((length) * sizeof(char));
-        // printf("length = |%d|\nsize = |%d|\n", length, size);
         for (int i = length; i > 0; i--)
         {
-            // printf("\ni = |%d|\nwidth = |%d|\nsize = |%d|\nlen-i = |%d|\n", i, length, size, length - i);
-            if (i > size)
-            {
-                stroka[i - 1] = (specif.flag.zero == 0 ? ' ' : '0');
-                // printf("i = |%d|\n", i);
-            }
+            if (i > size) stroka[i - 1] = (specif.flag.zero == 0 ? ' ' : '0');
             else
             {
                 int copyChisla = chislo;
                 for (int j = i - 1; j >= 0; j--)
                 {
-                    // printf("j = |%d|\n", j);
                     int d = copyChisla % 10;
                     stroka[j] = takeChar(d);
                     copyChisla /= 10;
@@ -277,35 +199,16 @@ char *transferStrokiInResultIntREVERS(SPEC specif, int chislo)
     }
     else
     {
-        // printf("sdddddddddddddd");
         stroka = malloc((size) * sizeof(char));
         int copyChisla = chislo;
-
         for (int j = size - 1; j >= 0; j--)
         {
-            // printf("\nj = |%d|\nlength = |%d|\nsize = |%d|\n", j, length, size);
-
             int d = copyChisla % 10;
-            // printf("%d = |%d|\n", i, d);
-
             stroka[j] = takeChar(d);
             copyChisla /= 10;
-            // printf("|%s|\n", stroka);
         }
         stroka[size] = '\0';
     }
-
-    // if (specif.width > 0 && specif.width > 1)
-    // {
-    //     int length = (int)specif.width;
-    //     stroka = (char *)malloc((length) * sizeof(char));
-
-    //     stroka[length] = '\0';
-    // }
-    // else
-    // {
-    //     stroka = (char *)malloc(1 * sizeof(char));
-    // }
     return stroka;
 }
 
@@ -313,23 +216,14 @@ char *transferStrokiInResultIntREVERS(SPEC specif, int chislo)
 char *transferStrokiInResultInt(SPEC specif, int chislo)
 {
     char *stroka;
-    // chislo = chislo;
     int size = sizeOfNumber(chislo);
     int length = (int)specif.width;
-    // printf("%d > %d", length, specif.wi.inWidth);
     if (length > size)
     {
-        // int j = 0;
-        stroka = (char *)malloc((length) * sizeof(char));
-        // printf("length = |%d|\nsize = |%d|\n", length, size);
+       stroka = (char *)malloc((length) * sizeof(char));
         for (int i = 0; i < length; i++)
         {
-            // printf("\ni = |%d|\nwidth = |%d|\nsize = |%d|\nlen-i = |%d|\n", i, length, specif.wi.inWidth, length - i);
-            if (length - i > size)
-            {
-                stroka[i] = (specif.flag.zero == 0 ? ' ' : '0');
-                // printf("pustaya stroka\n");
-            }
+            if (length - i > size) stroka[i] = (specif.flag.zero == 0 ? ' ' : '0');
             else
             {
 
@@ -337,11 +231,8 @@ char *transferStrokiInResultInt(SPEC specif, int chislo)
                 for (int j = length - 1; j >= length - size; j--)
                 {
                     int d = copyChisla % 10;
-                    // printf("%d = |%d|\n", i, d);
-
                     stroka[j] = takeChar(d);
                     copyChisla /= 10;
-                    // printf("|%s|\n", stroka);
                 }
                 break;
             }
@@ -350,35 +241,16 @@ char *transferStrokiInResultInt(SPEC specif, int chislo)
     }
     else
     {
-        // printf("sdddddddddddddd");
         stroka = malloc((size) * sizeof(char));
         int copyChisla = chislo;
-
         for (int j = size - 1; j >= 0; j--)
         {
-            // printf("\nj = |%d|\nlength = |%d|\nsize = |%d|\n", j, length, size);
-
             int d = copyChisla % 10;
-            // printf("%d = |%d|\n", i, d);
-
             stroka[j] = takeChar(d);
             copyChisla /= 10;
-            // printf("|%s|\n", stroka);
         }
         stroka[size] = '\0';
     }
-
-    // if (specif.width > 0 && specif.width > 1)
-    // {
-    //     int length = (int)specif.width;
-    //     stroka = (char *)malloc((length) * sizeof(char));
-
-    //     stroka[length] = '\0';
-    // }
-    // else
-    // {
-    //     stroka = (char *)malloc(1 * sizeof(char));
-    // }
     return stroka;
 }
 
@@ -392,14 +264,8 @@ char *transferStrokiInResultChar(SPEC specif, int symbol)
         stroka = (char *)malloc((length) * sizeof(char));
         for (int i = 0; i < length; i++)
         {
-            if (i + 1 != length)
-            {
-                stroka[i] = (specif.flag.zero == 0 ? ' ' : '0');
-            }
-            else
-            {
-                stroka[i] = symbol;
-            }
+            if (i + 1 != length) stroka[i] = (specif.flag.zero == 0 ? ' ' : '0');
+            else stroka[i] = symbol;
         }
         stroka[length] = '\0';
     }
@@ -417,10 +283,7 @@ SPEC check_specification(char *pointer, va_list *test)
 {
     SPEC specif;
     initialize(&specif);
-    // long long widthResult = -1;
     test = test;
-    // long long accuracityResult = -1;
-    // specif = specif;
     int flagToExit = 0;
     while (flagToExit == 0)
     {
@@ -434,7 +297,6 @@ SPEC check_specification(char *pointer, va_list *test)
         case '%':
             flagToExit = 1;
             specif.symbol = *pointer;
-            // printf("pointer = |%d|\n", *pointer);
             break;
         // Флаги
         case '+':
@@ -454,13 +316,11 @@ SPEC check_specification(char *pointer, va_list *test)
                 {
                     specif.width = 1;
                     addNewNumber(&specif, *pointer, 1);
-                    // widthResult = converterToLongLong(*pointer) * (specif->numbers * 10);
                 }
                 else
                 {
                     specif.accuracy = 1;
                     addNewNumber(&specif, *pointer, 0);
-                    // accuracityResult = converterToLongLong(*pointer) * (specif->numbers * 10);
                 }
             }
 
@@ -485,15 +345,12 @@ SPEC check_specification(char *pointer, va_list *test)
             {
                 specif.width = 1;
                 addNewNumber(&specif, *pointer, 1);
-                // widthResult = converterToLongLong(*pointer) * (specif->numbers * 10);
             }
             else
             {
                 specif.accuracy = 1;
                 addNewNumber(&specif, *pointer, 0);
-                // accuracityResult = converterToLongLong(*pointer) * (specif->numbers * 10);
             }
-
             specif.numbers += 1;
             break;
         case '.':
@@ -514,10 +371,6 @@ SPEC check_specification(char *pointer, va_list *test)
     }
 
     return specif;
-    // printf("%c |in check_specification|\n", *pointer++);
-    // printf("%c |in check_specification|\n", *pointer++);
-    // printf("%c |in check_specification|\n", *pointer++);
-    // printf("%c |in check_specification|\n", *pointer++);
 }
 
 long long converterToLongLong(char *chislo, SPEC *spec, int choose)
@@ -525,17 +378,12 @@ long long converterToLongLong(char *chislo, SPEC *spec, int choose)
     long long result = 0;
     int length = (choose == 1 ? spec->wi.inWidth : spec->ac.inAccuracy);
     int j = 0;
-    // chislo = chislo;
-    // printf("length = |%d|\n",length);
     for (int i = length - 1; i >= 0; i--)
     {
-
         int num = takeDigit(chislo[i]);
-        //    printf("int i = |%d|\nint num = |%d|\nint j = |%d|\n", i, num,j);
         if (num != -1)
         {
             result = result + (num * (j == 0 ? 1 : pow(10, j)));
-            // printf("result = |%d|\n", result);
             j++;
         }
     }
@@ -578,7 +426,6 @@ int takeDigit(char chislo)
         num = 9;
         break;
     }
-    // printf("|%d|\n", num);
     return num;
 }
 
@@ -618,7 +465,6 @@ char takeChar(int chislo)
         num = 57;
         break;
     }
-    // printf("|%d|\n", num);
     return num;
 }
 
