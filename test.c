@@ -57,11 +57,11 @@ int main(void)
     // double b = modf(d, &e);
     // e = e;
     // printf("%f %f", e, b);
-    char *prikol = "%12c ----";
-    char buffer[50];
+    char *prikol = "|%14.4d| ----";
+    char buffer[100];
     // // buffer = (char *)realloc(buffer, sizeof(char) * 100);
     // char number = '\"';
-    sprintf(buffer, prikol, 's');
+    sprintf(buffer, prikol, 13);
     printf("|%s|", buffer);
     return 0;
 }
