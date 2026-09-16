@@ -1,0 +1,10 @@
+#include "struct.h"
+
+#test normal_test
+    char bufferTrue[100];
+    char bufferTest[100];
+    int age = 25;
+    float height = 1.75;
+    sprintf(bufferTrue, "Age: %d, Height: %.2f meters", age, height);
+    s21_sprintf(bufferTest, "Age: %d, Height: %.2f meters", age, height);
+    printf("%zu\n%zu", strlen(bufferTest), strlen(bufferTrue));
